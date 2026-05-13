@@ -165,7 +165,9 @@ app.get("/callback", async (c) => {
     } satisfies Props,
   });
 
-  return Response.redirect(redirectTo);
+  const url = new URL(redirectTo);
+  url.searchParams.set("email", email);
+  return Response.redirect(url.toString());
 });
 
 app.get("/remove", async (c) => {
