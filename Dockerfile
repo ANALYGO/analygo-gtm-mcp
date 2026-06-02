@@ -18,7 +18,8 @@ FROM node:22-slim AS runtime
 WORKDIR /app
 
 # openssl needed by entrypoint to generate self-signed HTTPS cert
-RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
+# ca-certificates needed by workerd for outbound TLS (Google OAuth token exchange)
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copy everything from builder (node_modules, dist/, src/)
 COPY --from=builder /app /app
