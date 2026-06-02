@@ -45,6 +45,7 @@ fi
 exec npx wrangler dev \
   --ip "0.0.0.0" \
   --port "3000" \
+  --local-protocol https \
   --remote=false \
   --persist-to "/data" \
   --https-cert-path "$CERT_DIR/server.crt" \
