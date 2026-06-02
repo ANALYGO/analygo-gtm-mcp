@@ -12,7 +12,7 @@
   ],
   "routes": [
     {
-      "pattern": "gtm-mcp.stape.ai",
+      "pattern": "gtm-mcp.analygo.co",
       "custom_domain": true
     }
   ],
