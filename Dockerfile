@@ -39,6 +39,6 @@ ENV BUILD_SHA=${BUILD_SHA:-unknown} \
     BUILD_SOURCE=${BUILD_SOURCE:-unknown}
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD curl -f http://localhost:3000/ || exit 1
+    CMD node -e "require('http').get('http://localhost:3000/',r=>{process.exit(r.statusCode===200?0:1)})"
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
