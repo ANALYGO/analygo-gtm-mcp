@@ -1,0 +1,36 @@
+name: Deploy GTM MCP
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Pull image on server and trigger Coolify redeploy
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          GHCR_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          CF_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK }}
+        run: |
+          set -euo pipefail
+          install -m 600 /dev/null /tmp/deploy_key
+          echo "$DEPLOY_SSH_KEY" | base64 --decode > /tmp/deploy_key
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no root@${DEPLOY_SSH_HOST} \
+            "echo '${GHCR_TOKEN}' | docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
+             docker pull ghcr.io/analygo/gtm-mcp:main && \
+             docker tag ghcr.io/analygo/gtm-mcp:main ghcr.io/analygo/gtm-mcp:latest"
+          curl -sS \
+            -H "Authorization: Bearer ${COOLIFY_TOKEN}" \
+            -H "CF-Access-Client-Id: ${CF_CLIENT_ID}" \
+            -H "CF-Access-Client-Secret: ${CF_CLIENT_SECRET}" \
+            "${COOLIFY_WEBHOOK_URL}"
