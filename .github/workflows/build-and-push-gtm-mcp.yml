@@ -40,7 +40,7 @@ jobs:
           platforms: linux/amd64
           build-args: |
             BUILD_SHA=${{ github.sha }}
-            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp || github.event.repository.updated_at }}
             BUILD_SOURCE=${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
 
   deploy:
@@ -57,8 +57,7 @@ jobs:
           host: ${{ secrets.DEPLOY_SSH_HOST }}
           username: root
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: |
-            docker pull ghcr.io/analygo/gtm-mcp:main
+          script: docker pull ghcr.io/analygo/gtm-mcp:main
 
       - name: Trigger Coolify deploy
         run: |
