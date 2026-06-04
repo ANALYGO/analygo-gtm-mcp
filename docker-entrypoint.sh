@@ -23,6 +23,12 @@ fi
 if [ -n "${COOKIE_ENCRYPTION_KEY:-}" ]; then
   echo "COOKIE_ENCRYPTION_KEY=${COOKIE_ENCRYPTION_KEY}" >> "$DEV_VARS"
 fi
+if [ -n "${GTM_API_KEY:-}" ]; then
+  echo "GTM_API_KEY=${GTM_API_KEY}" >> "$DEV_VARS"
+fi
+if [ -n "${GTM_REFRESH_TOKEN:-}" ]; then
+  echo "GTM_REFRESH_TOKEN=${GTM_REFRESH_TOKEN}" >> "$DEV_VARS"
+fi
 if [ -n "${HOSTED_DOMAIN:-}" ]; then
   echo "HOSTED_DOMAIN=${HOSTED_DOMAIN}" >> "$DEV_VARS"
 fi

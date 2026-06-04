@@ -8,6 +8,7 @@ import {
   getUpstreamAuthorizeUrl,
   Props,
 } from "./authorizeUtils";
+import { getServerTagManagerClient } from "./getServerTagManagerClient";
 import { renderMainPage } from "./renderMainPage";
 import { renderPrivacyPage } from "./renderPrivacyPage";
 import { renderTermsPage } from "./renderTermsPage";
@@ -206,6 +207,101 @@ app.get("/remove", async (c) => {
   return new Response("OK", {
     status: 200,
   });
+});
+
+function requireApiKey(c: Context) {
+  const auth = c.req.header("X-Internal-Auth") || "";
+  if (!auth || auth !== c.env.GTM_API_KEY) {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+}
+
+// GET /api/gtm/accounts
+app.get("/api/gtm/accounts", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+  try {
+    const service = await getServerTagManagerClient(c.env);
+    const res = await service.accounts.list({});
+    return c.json(res.data);
+  } catch (e: any) {
+    return c.json({ error: e.message || "Internal server error" }, 500);
+  }
+});
+
+// GET /api/gtm/accounts/:accountId/containers
+app.get("/api/gtm/accounts/:accountId/containers", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+  try {
+    const service = await getServerTagManagerClient(c.env);
+    const res = await service.accounts.containers.list({
+      parent: `accounts/${c.req.param("accountId")}`,
+    });
+    return c.json(res.data);
+  } catch (e: any) {
+    return c.json({ error: e.message || "Internal server error" }, 500);
+  }
+});
+
+// GET /api/gtm/accounts/:accountId/containers/:containerId/workspaces
+app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+  try {
+    const service = await getServerTagManagerClient(c.env);
+    const res = await service.accounts.containers.workspaces.list({
+      parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}`,
+    });
+    return c.json(res.data);
+  } catch (e: any) {
+    return c.json({ error: e.message || "Internal server error" }, 500);
+  }
+});
+
+// GET /api/gtm/accounts/:accountId/containers/:containerId/workspaces/:workspaceId/tags
+app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces/:workspaceId/tags", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+  try {
+    const service = await getServerTagManagerClient(c.env);
+    const res = await service.accounts.containers.workspaces.tags.list({
+      parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}/workspaces/${c.req.param("workspaceId")}`,
+    });
+    return c.json(res.data);
+  } catch (e: any) {
+    return c.json({ error: e.message || "Internal server error" }, 500);
+  }
+});
+
+// GET /api/gtm/accounts/:accountId/containers/:containerId/workspaces/:workspaceId/triggers
+app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces/:workspaceId/triggers", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+  try {
+    const service = await getServerTagManagerClient(c.env);
+    const res = await service.accounts.containers.workspaces.triggers.list({
+      parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}/workspaces/${c.req.param("workspaceId")}`,
+    });
+    return c.json(res.data);
+  } catch (e: any) {
+    return c.json({ error: e.message || "Internal server error" }, 500);
+  }
+});
+
+// GET /api/gtm/accounts/:accountId/containers/:containerId/workspaces/:workspaceId/variables
+app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces/:workspaceId/variables", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+  try {
+    const service = await getServerTagManagerClient(c.env);
+    const res = await service.accounts.containers.workspaces.variables.list({
+      parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}/workspaces/${c.req.param("workspaceId")}`,
+    });
+    return c.json(res.data);
+  } catch (e: any) {
+    return c.json({ error: e.message || "Internal server error" }, 500);
+  }
 });
 
 app.get("/", async () => {
