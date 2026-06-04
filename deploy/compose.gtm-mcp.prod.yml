@@ -1,0 +1,20 @@
+services:
+  gtm-mcp:
+    image: ghcr.io/analygo/gtm-mcp:main
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - gtm-mcp-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  gtm-mcp-data:
+    external: true
