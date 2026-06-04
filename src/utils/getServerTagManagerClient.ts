@@ -14,7 +14,8 @@ async function getAccessToken(env: Env): Promise<string> {
     refreshToken: env.GTM_REFRESH_TOKEN,
   });
   if (errMessage || !tokenResult) {
-    throw new Error("Failed to refresh Google access token using GTM_REFRESH_TOKEN");
+    console.error(`[GTM] Google refresh failed: ${errMessage}`);
+    throw new Error(`Google refresh failed: ${errMessage || "no token returned"}`);
   }
   cachedToken = {
     access_token: tokenResult.access_token,
