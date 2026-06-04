@@ -1,1 +1,28 @@
-{"plan_id":"gtm-rest-api-20260604","plan_name":"Add REST API Endpoints to GTM MCP Server","branch":"feature/gtm-rest-api","surfaces":["A","B","REVIEW"],"worktrees":{"A":"../worktrees/A-gtm-rest-api","B":"../worktrees/B-gtm-rest-api","REVIEW":"../worktrees/R-review-gtm-rest-api"},"durations":{"A":58,"B":127,"REVIEW":155},"verdicts":{"A":"Complete","B":"Complete","REVIEW":"Complete"},"review_verdict":"PASS","timestamp":"2026-06-04T00:00:00Z","agent_models":{"A":"deepseek-v4-flash","B":"deepseek-v4-flash","REVIEW":"deepseek-v4-flash"},"total_duration_seconds":340,"boundary_violations":[],"acceptance_checks_passed":6,"acceptance_checks_total":6}
+{
+  "plan_id": "gtm-cicd-pipeline-20260604",
+  "plan_name": "CI/CD Pipeline for GTM MCP Server",
+  "branch": "feature/gtm-cicd-integration",
+  "surfaces": ["A", "B", "C", "REVIEW"],
+  "worktrees": {
+    "A": "../worktrees/A-gtm-cicd",
+    "B": "../worktrees/B-gtm-cicd",
+    "C": "../worktrees/C-gtm-cicd",
+    "REVIEW": "../worktrees/R-review-gtm-cicd"
+  },
+  "durations": {"A": 77, "B": 28, "C": 34, "REVIEW": 124},
+  "verdicts": {"A": "Complete", "B": "Complete", "C": "Complete", "REVIEW": "PASS"},
+  "review_verdict": "PASS",
+  "timestamp": "2026-06-04T06:45:00Z",
+  "agent_models": {"A": "claude-haiku-4-5", "B": "claude-haiku-4-5", "C": "claude-haiku-4-5", "REVIEW": "claude-haiku-4-5"},
+  "total_duration_seconds": 263,
+  "boundary_violations": [],
+  "acceptance_checks_passed": 17,
+  "acceptance_checks_total": 17,
+  "integration_branch": "feature/gtm-cicd-integration",
+  "commits": {
+    "A": "7b9a2fc",
+    "B": "c5ce283",
+    "integration": "0aab364"
+  },
+  "notes": "lint step has continue-on-error due to pre-existing Stape fork issues. DEPLOY_SSH_KEY is a new dedicated key (gtm-mcp-deploy-20260604). Three org-level secrets auto-available, not duplicated."
+}

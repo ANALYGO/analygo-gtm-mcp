@@ -1,0 +1,29 @@
+service: gtm-mcp
+env:
+  - key: GOOGLE_CLIENT_ID
+    class: secret
+    owner: google-cloud-console
+  - key: GOOGLE_CLIENT_SECRET
+    class: secret
+    owner: google-cloud-console
+  - key: GOOGLE_REDIRECT_URI
+    class: config
+    owner: coolify
+  - key: COOKIE_ENCRYPTION_KEY
+    class: secret
+    owner: admin
+  - key: GTM_API_KEY
+    class: secret
+    owner: admin
+    note: "Must match GTM_MCP_API_KEY in Aegis backend .env"
+  - key: GTM_REFRESH_TOKEN
+    class: secret
+    owner: admin
+    note: "Obtained via OAuth playground or mcp-remote authentication"
+  - key: WORKER_HOST
+    class: config
+    owner: coolify
+    value: "gtm-mcp.analygo.co"
+  - key: HOSTED_DOMAIN
+    class: config
+    owner: admin

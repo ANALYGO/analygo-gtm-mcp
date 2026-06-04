@@ -30,4 +30,15 @@ RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 3000
 
+ARG BUILD_SHA
+ARG BUILD_DATE
+ARG BUILD_SOURCE
+
+ENV BUILD_SHA=${BUILD_SHA:-unknown} \
+    BUILD_DATE=${BUILD_DATE:-unknown} \
+    BUILD_SOURCE=${BUILD_SOURCE:-unknown}
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:3000/ || exit 1
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
