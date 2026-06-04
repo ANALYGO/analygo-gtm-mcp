@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           install -m 600 /dev/null /tmp/deploy_key
           echo "$DEPLOY_SSH_KEY" | base64 --decode > /tmp/deploy_key
-          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no ${DEPLOY_SSH_HOST} \
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no root@${DEPLOY_SSH_HOST} \
             "echo '${GHCR_TOKEN}' | docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
              docker pull ghcr.io/analygo/gtm-mcp:main"
           curl -sS \
