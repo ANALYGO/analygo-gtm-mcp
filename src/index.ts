@@ -50,6 +50,12 @@ export default {
 
     console.log("[HTTP] Incoming request", logBase);
 
+    // Silently handle favicon requests — browsers auto-request /favicon.ico
+    // and the OAuthProvider has no route for it, causing a noisy 404 error log.
+    if (url.pathname === "/favicon.ico") {
+      return new Response(null, { status: 204 });
+    }
+
     const isMcp = url.pathname === "/mcp" && request.method === "GET";
     const isLegacySse = url.pathname === "/sse" && request.method === "GET";
 
