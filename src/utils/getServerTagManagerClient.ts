@@ -4,10 +4,17 @@ import { readRefreshTokenFromKV } from "./kvTokenStore";
 
 let cachedToken: { access_token: string; expiresAt: number } | null = null;
 
-async function getAccessToken(env: Env): Promise<string> {
+async function getAccessToken(env: Env, perUserAccessToken?: string): Promise<string> {
   // Tier 1: In-memory cache (existing, fast path)
   if (cachedToken && Date.now() < cachedToken.expiresAt - 300_000) {
     return cachedToken.access_token;
+  }
+
+  // Tier 1.5: Per-user access token via X-Google-Access-Token header
+  // Used by Aegis when a user's own Google token is available from UsersLog.
+  // Call GTM API directly with it — no refresh needed (caller handles that).
+  if (perUserAccessToken) {
+    return perUserAccessToken;
   }
 
   // Tier 2: Env var GTM_REFRESH_TOKEN (backward-compatible)
@@ -58,8 +65,11 @@ async function getAccessToken(env: Env): Promise<string> {
   );
 }
 
-export async function getServerTagManagerClient(env: Env) {
-  const accessToken = await getAccessToken(env);
+export async function getServerTagManagerClient(
+  env: Env,
+  perUserAccessToken?: string,
+) {
+  const accessToken = await getAccessToken(env, perUserAccessToken);
   return google.tagmanager({
     version: "v2",
     headers: { Authorization: `Bearer ${accessToken}` },

@@ -221,12 +221,17 @@ function requireApiKey(c: Context) {
   }
 }
 
+/** Read per-user Google access token from request header, if present. */
+function getPerUserAccessToken(c: Context): string | undefined {
+  return c.req.header("X-Google-Access-Token") || undefined;
+}
+
 // GET /api/gtm/accounts
 app.get("/api/gtm/accounts", async (c) => {
   const authErr = requireApiKey(c);
   if (authErr) return authErr;
   try {
-    const service = await getServerTagManagerClient(c.env);
+    const service = await getServerTagManagerClient(c.env, getPerUserAccessToken(c));
     const res = await service.accounts.list({});
     return c.json(res.data);
   } catch (e: any) {
@@ -239,7 +244,7 @@ app.get("/api/gtm/accounts/:accountId/containers", async (c) => {
   const authErr = requireApiKey(c);
   if (authErr) return authErr;
   try {
-    const service = await getServerTagManagerClient(c.env);
+    const service = await getServerTagManagerClient(c.env, getPerUserAccessToken(c));
     const res = await service.accounts.containers.list({
       parent: `accounts/${c.req.param("accountId")}`,
     });
@@ -254,7 +259,7 @@ app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces", async
   const authErr = requireApiKey(c);
   if (authErr) return authErr;
   try {
-    const service = await getServerTagManagerClient(c.env);
+    const service = await getServerTagManagerClient(c.env, getPerUserAccessToken(c));
     const res = await service.accounts.containers.workspaces.list({
       parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}`,
     });
@@ -269,7 +274,7 @@ app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces/:worksp
   const authErr = requireApiKey(c);
   if (authErr) return authErr;
   try {
-    const service = await getServerTagManagerClient(c.env);
+    const service = await getServerTagManagerClient(c.env, getPerUserAccessToken(c));
     const res = await service.accounts.containers.workspaces.tags.list({
       parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}/workspaces/${c.req.param("workspaceId")}`,
     });
@@ -284,7 +289,7 @@ app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces/:worksp
   const authErr = requireApiKey(c);
   if (authErr) return authErr;
   try {
-    const service = await getServerTagManagerClient(c.env);
+    const service = await getServerTagManagerClient(c.env, getPerUserAccessToken(c));
     const res = await service.accounts.containers.workspaces.triggers.list({
       parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}/workspaces/${c.req.param("workspaceId")}`,
     });
@@ -299,7 +304,7 @@ app.get("/api/gtm/accounts/:accountId/containers/:containerId/workspaces/:worksp
   const authErr = requireApiKey(c);
   if (authErr) return authErr;
   try {
-    const service = await getServerTagManagerClient(c.env);
+    const service = await getServerTagManagerClient(c.env, getPerUserAccessToken(c));
     const res = await service.accounts.containers.workspaces.variables.list({
       parent: `accounts/${c.req.param("accountId")}/containers/${c.req.param("containerId")}/workspaces/${c.req.param("workspaceId")}`,
     });
