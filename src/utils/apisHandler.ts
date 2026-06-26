@@ -9,7 +9,7 @@ import {
   Props,
 } from "./authorizeUtils";
 import { getServerTagManagerClient } from "./getServerTagManagerClient";
-import { writeRefreshTokenToKV } from "./kvTokenStore";
+import { readRefreshTokenFromKV, writeRefreshTokenToKV } from "./kvTokenStore";
 import { renderMainPage } from "./renderMainPage";
 import { renderPrivacyPage } from "./renderPrivacyPage";
 import { renderTermsPage } from "./renderTermsPage";
@@ -225,6 +225,28 @@ function requireApiKey(c: Context) {
 function getPerUserAccessToken(c: Context): string | undefined {
   return c.req.header("X-Google-Access-Token") || undefined;
 }
+
+// GET /api/gtm/token — return the server-level refresh token from KV.
+// Called by the Aegis backend's token_manager to obtain the refresh
+// token and exchange it for an access token.
+app.get("/api/gtm/token", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+
+  const refreshToken = await readRefreshTokenFromKV(c.env.OAUTH_KV);
+  if (!refreshToken) {
+    return c.json(
+      {
+        error:
+          "No refresh token found. " +
+          "Connect a Google account via Settings → Integrations first.",
+      },
+      404,
+    );
+  }
+
+  return c.json({ refresh_token: refreshToken });
+});
 
 // GET /api/gtm/accounts
 app.get("/api/gtm/accounts", async (c) => {
