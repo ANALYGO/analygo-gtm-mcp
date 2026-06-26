@@ -248,6 +248,28 @@ app.get("/api/gtm/token", async (c) => {
   return c.json({ refresh_token: refreshToken });
 });
 
+// POST /api/gtm/token — accept a refresh token from the Platform backend
+// and store it in KV. Authenticated with X-Internal-Auth.
+app.post("/api/gtm/token", async (c) => {
+  const authErr = requireApiKey(c);
+  if (authErr) return authErr;
+
+  let body: { refresh_token?: string };
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "Invalid JSON body" }, 400);
+  }
+
+  if (!body.refresh_token || typeof body.refresh_token !== "string") {
+    return c.json({ error: "Missing or invalid refresh_token field" }, 400);
+  }
+
+  await writeRefreshTokenToKV(c.env.OAUTH_KV, body.refresh_token);
+
+  return c.json({ ok: true });
+});
+
 // GET /api/gtm/accounts
 app.get("/api/gtm/accounts", async (c) => {
   const authErr = requireApiKey(c);
