@@ -18,10 +18,8 @@
   ],
   "migrations": [
     {
-      "tag": "v1",
-      "new_classes": [
-        "GoogleTagManagerMCPServer"
-      ]
+      "tag": "v2",
+      "new_classes": []
     }
   ],
   "durable_objects": {
